@@ -100,6 +100,62 @@ nav a.active {
     font-size: 18px;
 }
 
+/* ===== Avatar ===== */
+.avatar-container {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ===== Layer 1 ===== */
+.avatar-container::before {
+    content: '';
+    position: absolute;
+    inset: -4px;    
+    border-radius: 50%;
+    background: conic-gradient(from 0deg,
+        #6c63ff,              /* Purple */
+        #a855f7,              /* Violet */
+        #06b6d4,              /* Cyan */
+        #a855f7,              /* Violet */
+        #6c63ff);
+    animation: rotateGlow 4s linear infinite;
+    z-index: 0;
+}
+
+/* ===== Layer 2 ===== */
+.avatar-container::after {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border-radius: 50%;
+    background: #0a0a1a;
+    z-index: 1;
+}
+
+.avatar-container img {
+    width: 147px;
+    height: 147px;
+    border-radius: 50%;
+    object-fit: cover;
+    position: relative;
+    z-index: 2;
+    transition: transform 0.4s ease;
+}
+
+.avatar-container:hover img {
+    transform: scale(1.08);
+}
+
+@keyframes rotateGlow {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
 /* ===== ALL SECTIONS ===== */
 section{
     padding: 80px 40px;
@@ -154,6 +210,82 @@ h2 {
 
 #projects a:hover{
     color: #a855f7;
+}
+
+/* ===== SKILLS ===== */
+.skill-category{
+    margin-bottom: 36px;
+}
+
+.skill-category h3{
+    font-size: 18px;
+    color: #6c63ff;
+    margin-bottom: 16px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.skill-item{
+    margin-bottom: 16px;
+}
+
+.skill-info{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.skill-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #e0e0e0;
+}
+
+.skill-percent {
+    font-size: 13px;
+    font-weight: 700;
+    color: #a9a6ee;
+}
+
+.skill-bar {
+    width: 100%;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.skill-fill {
+    height: 100%;
+    width: 0;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #6c63ff, #a855f7);
+    transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+    position: relative;
+}
+
+.skill-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.2) 50%,
+        transparent 100%
+    );
+    animation: shimer 2s ease-in-out infinite;
+}
+
+@keyframes shimer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%);}
 }
 
 /* ===== CONTACT ===== */

@@ -162,5 +162,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         typeWord();
     }
+
+    //==============================================================// 
+    const skillBars = document.querySelectorAll('.skill-fill');
+    const skillObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const bar = entry.target;
+                const targetWidth = bar.getAttribute('data-width');
+
+                // Small delay for a statggered feel
+                setTimeout(() => {
+                    bar.style.width = targetWidth + '%';
+                }, 200);
+
+                observer.unobserve(bar); // Only animate once
+            }
+        });
+    }, {
+        threshold: 0.3 // Trigger when 30% of the bar is visible
+    });
+
+    // Start observing each skill bar
+    skillBars.forEach(bar => skillObserver.observe(bar));
 });
 
