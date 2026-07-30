@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>My Portfolio</title>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+
+        <!-- Navigation bar -->
+        <nav>
+            <a href="#hero" class="logo"> Quang Huy</a>
+            <ul>
+                <li><a href="#about">About</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+
+        <section id="hero">
+            <h1>Hi, I'm Quang Huy</h1>
+            
+            <!-- Typing animation writes into this element -->
+            <p id="role"></p>
+            <p>Welcome to my portfolio website!</p>
+        </section>
+
+
+        <!-- About Section -->
+        <section id="about" class="reveal">
+            <h2>About Me</h2>
+            <p>I'm a passionate developer who loves building things for the web. I enjoy turning ideas into real, working applications.</p>
+            <p>When I'm not coding, you'll find me learning new technologies and contributing to open source.</p>
+        </section>    
+
+        <section id="projects" >
+            <h2 class="reveal">My Projects</h2>
+            <article class="reveal"> 
+                <h3>Project One</h3>
+                <p>A cool website i built using HTML and CSS.</p>
+                <a href="#">View Project</a>
+            </article>
+
+            <article class="reveal">
+                <h3>Project Two</h3>
+                <p>A JavaScript app that does something cool.</p>
+                <a href="#">View Project</a>
+            </article>
+
+            <article class="reveal">
+                <h3>Project Three</h3>
+                <p>A full-stack application built with Node.js and React.</p>
+                <a href="#">View Project</a>
+            </article>    
+        </section>
+
+        <section id="contact" class="reveal">
+            <h2>Contact Me</h2>
+            <p>Want to work together? Send me a message!</p>
+
+            <form>
+                <label for="name">Name:</label>
+                <input type="text" id="name" placeholder="Your name">
+
+                <label for="email">Email:</label>
+                <input type="email" id="email" placeholder="your@email.com">
+                
+                <label for="message">Message:</label>
+                <textarea id="message" placeholder="Your message"></textarea>
+
+                <button type="submit">Submit</button>
+            </form>
+        </section>
+
+        <!-- Back to Top Button -->
+        <button id="backToTop" title="Back to top">↑</button>
+
+        <!-- Footer -->
+        <footer>
+            <p>&copy; MADE BY TRAN QUANG HUY &copy;</p>
+        </footer>
+
+        <script src="script.js"></script>
+    </body>
+</html>     

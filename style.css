@@ -1,0 +1,248 @@
+/* ===== RESET ===== */
+/* Remove default spacing the browser adds */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ===== BODY ===== */ 
+body { 
+    background-color: #0a0a1a;
+    color: #e0e0e0;
+    font-family: 'Inter', Arial, sans-serif;
+    line-height: 1.6;
+}
+
+/* By TAG - select All <nav> elements */
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;    
+    padding: 20px 40px;
+    background-color: rgba(0, 0, 0, 0.8);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+}
+
+nav.scrolled{
+    background: rgba(0, 0, 0, 0.9);
+    box-shadow: 0 4px 30px rgba(108, 99, 255, 0.5);
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    gap: 30px;
+}
+
+nav a {
+    color: #9898b0;
+    text-decoration: none;
+    font-size: 14px;
+    position: relative;
+}
+
+nav a:hover{
+    color: #ffffff;
+}
+
+/* Animated underline */
+nav a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #6c63ff;
+    transition: width 0.3s ease;
+}
+
+nav a:hover::after{
+    width: 100%;
+}
+
+nav a.active {
+    color: #6c63ff;
+    font-weight: 600;
+}
+
+/* By CLASS - select All elements with class="logo" */
+.logo {
+    color: #6c63ff;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+
+/* ===== HERO ===== */
+#hero{
+    padding: 150px 40px 80px;
+    text-align: center;
+}
+
+#hero h1{
+    font-size: 48px;
+    margin-bottom: 26px;
+    font-weight: 900;
+    background: linear-gradient(135deg, #ffffff, #6c63ff, #a855f7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+#hero p{
+    color: #9898b0;
+    font-size: 18px;
+}
+
+/* ===== ALL SECTIONS ===== */
+section{
+    padding: 80px 40px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* ===== SECTION TITLES ===== */
+h2 {
+    font-size: 28px;
+    margin-bottom: 24px;
+    color: #ffffff;
+}
+
+/* ===== ABOUT ===== */
+#about p{
+    color: #9898b0; 
+    margin-bottom: 16px;
+    font-size: 16px;
+}
+
+/* ===== PROJECTS ===== */
+#projects article{
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgb(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#projects article:hover {
+    transform: translateY(-8px);
+    box-shadow: 0px 20px 40px rgba(108, 99, 255, 0.5);
+}
+
+#projects h3{
+    font-size: 20px;
+    margin-bottom: 8px;
+    color: #ffffff;
+}
+
+#projects p{
+    color:  #9898b0;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+#projects a {
+    color: #6c63ff;;
+}
+
+#projects a:hover{
+    color: #a855f7;
+}
+
+/* ===== CONTACT ===== */
+#contact p{
+    color: #9898b0;
+    margin-bottom: 24px;
+} 
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 500px;
+}
+
+label {
+    color: #9898b0;
+    font-size: 14px;
+}
+
+input, textarea {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 12px 16px;
+    color: #e0e0e0;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    outline: none;
+}
+
+input:focus, textarea.focus {
+    border-color: #6c63ff;
+}
+
+button{
+    background: linear-gradient(135deg, #6c63ff, #a855f7); 
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 14px 24px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0px 4px 12px rgba(108, 99, 255, 0.3);
+}
+
+button:hover{
+    transform: translateY(-3px);
+    box-shadow: 0px 8px 30px rgba(108, 99, 255, 0.6);
+}   
+
+/* ===== BACK TO TOP ===== */
+#backToTop{
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    font-size: 20px;
+    display: none;
+    z-index: 200;
+    padding: 0;
+    cursor: pointer;
+}
+
+#backToTop:hover{
+    transform: translateY(-3px);
+}
+
+/* ===== REVEAL ANIMATION ===== */
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ===== FOOTER ===== */
+footer{
+    text-align: center;
+    padding: 40px;
+    color: #9898b0;
+    font-size: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
