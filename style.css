@@ -313,13 +313,29 @@ h2 {
 
 .timeline-item {
     width: 50%;
+    max-width: 450px;
     padding: 20px 40px;
     position: relative;
 }
 
-.timeline-item:hover {
-    color: #d7c0ed;
-    transform: translateY(-10px);
+.timeline-item::before {
+    content: "";
+    position: absolute;
+    top: 30px;
+    width: 16px;
+    height: 16px;
+    background-color: #6c63ff;
+    border-radius: 50%;
+    z-index: 10;
+    box-shadow: 0 0 20px #6c63ff;
+}
+
+.left::before {
+    right: -8px;
+}
+
+.right::before {
+    left: -8px;
 }
 
 .left {
@@ -346,7 +362,26 @@ h2 {
 }
 
 .timeline-content:hover {
+    transform: translateY(-8px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     box-shadow: 0px 20px 40px rgba(108, 99, 255, 0.5);
+}
+
+.timeline-item.left {
+    opacity: 0;
+    transform: translateX(-100px);
+    transition: all 0.8s ease;
+}
+
+.timeline-item.right {
+    opacity: 0;
+    transform: translateX(100px);
+    transition: all 0.8s ease;
+}
+
+.timeline-item.show { 
+    opacity: 1;
+    transform: translateX(0);
 }
 
 /* ===== CONTACT ===== */
