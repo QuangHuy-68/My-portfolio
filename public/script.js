@@ -1,167 +1,188 @@
-(function () {
-        const saved = localStorage.getItem('theme');
-        const oslight = window.matchMedia('...').matches;
-        const theme = saved || (oslight ? 'light' : 'dark');
-        document.documentElement.setAttribute('data-theme', theme);
-    })();
-
 document.addEventListener('DOMContentLoaded', () => {
+
     /* -------------------------------------------------------
-    1️⃣  Smooth scrolling for all anchor links (href="#…")
+       1️⃣  Smooth scrolling for all anchor links (href="#…")
     ------------------------------------------------------- */
     document.querySelectorAll('a[href^="#"]').forEach(link => {
-        link.addEventListener('click', e => { 
+        link.addEventListener('click', e => {
             const href = link.getAttribute('href');
             if (href === '#') return;
 
             e.preventDefault();
-            const target = document.querySelector(href)
+            const target = document.querySelector(href);
 
             if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
-        })
+        });
     });
+
     /* -------------------------------------------------------
-    2️⃣  Navbar background change on scroll (adds a .scrolled class – you can style it in CSS)
+       2️⃣  Navbar background change on scroll
     ------------------------------------------------------- */
     const navbar = document.querySelector('nav');
     if (navbar) {
         window.addEventListener('scroll', () => {
-            if (window.scrollY > 50 ) {
-                navbar.classList.add('scrolled')
-            } else {
-                navbar.classList.remove('scrolled');
-            }
+            navbar.classList.toggle('scrolled', window.scrollY > 50);
         });
     }
 
     /* -------------------------------------------------------
-    3️⃣  Active‑link highlight (Scroll‑Spy)
+       3️⃣  Active‑link highlight (Scroll‑Spy)
     ------------------------------------------------------- */
     const sections = document.querySelectorAll('section[id]');
     const navLinks = document.querySelectorAll('nav a');
 
     function setActiveNav() {
-        const scrollPos = window.scrollY + 200; // Offset so it  lights up a bit earlier
+        const scrollPos = window.scrollY + 200;
         sections.forEach(section => {
-            const top = section.offsetTop;
+            const top    = section.offsetTop;
             const height = section.offsetHeight;
-            const id = section.id;
+            const id     = section.id;
 
             if (scrollPos >= top && scrollPos < top + height) {
                 navLinks.forEach(link => {
                     link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
                 });
             }
-        })
+        });
     }
+
     window.addEventListener('scroll', setActiveNav);
-    // Call once on load (in case the page opens at a non-top offset)
     setActiveNav();
 
-
     /* -------------------------------------------------------
-    4. Theme toggle — LESSON 5 PART 3
-
-    HOW IT WORKS:
-    - Read current data-theme from <html>
-    - Flip it: 'dark' → 'light' or 'light' → 'dark'
-    - Write it back to <html>  → CSS vars update instantly
-    - Save to localStorage     → remembered on next visit
+       4️⃣  Theme toggle
+          - Reads current data-theme from <html>
+          - Flips it: 'dark' ↔ 'light'
+          - Writes back to <html>  → CSS vars update instantly
+          - Saves to localStorage  → remembered on next visit
     ------------------------------------------------------- */
     const themeToggle = document.getElementById('themeToggle');
     if (themeToggle) {
         themeToggle.addEventListener('click', () => {
             const current = document.documentElement.getAttribute('data-theme');
-
-            const next = current === 'dark' ? 'light' : 'dark';
+            const next    = current === 'dark' ? 'light' : 'dark';
 
             document.documentElement.setAttribute('data-theme', next);
-
-            localStorage.setItem('theme',next);
+            localStorage.setItem('theme', next);
         });
     }
 
     /* -------------------------------------------------------
-    4️⃣  Back‑to‑top button (optional)
+       5️⃣  Back‑to‑top button
     ------------------------------------------------------- */
     const backBtn = document.getElementById('backToTop');
     if (backBtn) {
-        // Show after scrolling down a bit
         window.addEventListener('scroll', () => {
             backBtn.style.display = window.scrollY > 300 ? 'flex' : 'none';
         });
 
-        // Smooth scroll to top when clicked
         backBtn.addEventListener('click', () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     }
 
     /* -------------------------------------------------------
-    5️⃣  Contact form – fake “sending” → “sent” feedback
+       6️⃣  Contact form — REAL email via POST /api/contact
     ------------------------------------------------------- */
     const contactForm = document.querySelector('#contact form');
     if (contactForm) {
-        contactForm.addEventListener('submit', e =>{
+        contactForm.addEventListener('submit', async e => {
+            // Stop the browser from refreshing the page
             e.preventDefault();
 
-            // Keep page from reloading
             const submitBtn = contactForm.querySelector('button[type="submit"]');
-            const original = submitBtn.textContent;
+            const original  = submitBtn.textContent;
 
-            // Show loading state
-            submitBtn.textContent = 'Sending';
-            submitBtn.disabled = true;
+            // ── Loading state ──
+            submitBtn.textContent   = 'Sending…';
+            submitBtn.disabled      = true;
             submitBtn.style.opacity = '0.7';
 
-            // Simulated network delay - replace with fetch() later
-            setTimeout(() => {
-                submitBtn.textContent = 'Message Sent!';
-                submitBtn.style.opacity = '1';
-                submitBtn.style.background = 'linear-gradient(135deg, #10b981, #06b6d4)';
+            // ── Collect form values ──
+            const payload = {
+                name:    document.getElementById('name').value.trim(),
+                email:   document.getElementById('email').value.trim(),
+                message: document.getElementById('message').value.trim(),
+            };
 
-                // Reset after a couple of seconds
+            try {
+                // ── Send POST request to our Express server ──
+                //    fetch() is the modern way to make HTTP requests from JS
+                //    method: 'POST'         → we're SENDING data
+                //    headers: ...           → tell server we're sending JSON
+                //    body: JSON.stringify() → convert object to JSON string
+                const response = await fetch('/api/contact', {
+                    method:  'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body:    JSON.stringify(payload)
+                });
+
+                // ── Parse the JSON response from the server ──
+                const data = await response.json();
+
+                if (data.success) {
+                    // ✅ Success
+                    submitBtn.textContent      = 'Message Sent! ✓';
+                    submitBtn.style.opacity    = '1';
+                    submitBtn.style.background = 'linear-gradient(135deg, #10b981, #06b6d4)';
+
+                    setTimeout(() => {
+                        contactForm.reset();
+                        submitBtn.textContent      = original;
+                        submitBtn.style.background = '';
+                        submitBtn.disabled         = false;
+                    }, 2500);
+                } else {
+                    // ❌ Server returned an error
+                    submitBtn.textContent      = data.error || 'Something went wrong';
+                    submitBtn.style.opacity    = '1';
+                    submitBtn.style.background = 'linear-gradient(135deg, #ef4444, #f97316)';
+
+                    setTimeout(() => {
+                        submitBtn.textContent      = original;
+                        submitBtn.style.background = '';
+                        submitBtn.disabled         = false;
+                    }, 3000);
+                }
+
+            } catch (err) {
+                // ❌ Network error (server not running, no internet, etc.)
+                console.error('Contact error:', err);
+                submitBtn.textContent      = 'Network error — try again';
+                submitBtn.style.opacity    = '1';
+                submitBtn.style.background = 'linear-gradient(135deg, #ef4444, #f97316)';
+
                 setTimeout(() => {
-                    contactForm.reset();
-                    submitBtn.textContent = original;
+                    submitBtn.textContent      = original;
                     submitBtn.style.background = '';
-                    submitBtn.disabled = false;
-                }, 2000);
-            }, 1000);
-        })
+                    submitBtn.disabled         = false;
+                }, 3000);
+            }
+        });
     }
 
-     /* -------------------------------------------------------
-    6️⃣  Scroll‑reveal (IntersectionObserver) Add class="reveal" to any element you want to animate.
+    /* -------------------------------------------------------
+       7️⃣  Scroll‑reveal (IntersectionObserver)
+          Add class="reveal" to any element you want to animate.
     ------------------------------------------------------- */
-    const revealElements = document.querySelectorAll(".reveal");
+    const revealElements = document.querySelectorAll('.reveal');
 
     const revealObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add("revealed");
-            } else {
-                entry.target.classList.remove("revealed");
-            }
+            entry.target.classList.toggle('revealed', entry.isIntersecting);
         });
-    }, {
-        threshold: 0.15,
-        rootMargin: "0px 0px -10%"
-    });
+    }, { threshold: 0.15, rootMargin: '0px 0px -10%' });
 
     revealElements.forEach(el => revealObserver.observe(el));
 
-
     /* -------------------------------------------------------
-    7️⃣  Typing Animation (Hero role line) Cycles through an array of phrases, typing and deleting one character at a time.
+       8️⃣  Typing Animation (Hero role line)
+          Cycles through phrases, typing and deleting one char at a time.
     ------------------------------------------------------- */
-    const roleE1 = document.getElementById('role');
-    if (roleE1) {
+    const roleEl = document.getElementById('role');
+    if (roleEl) {
         const phrases = [
             'Developer',
             'Designer',
@@ -169,24 +190,24 @@ document.addEventListener('DOMContentLoaded', () => {
             'Open-source Contributor'
         ];
         let phraseIdx = 0;
-        let charIdx = 0;
-        let deleting = false;
+        let charIdx   = 0;
+        let deleting  = false;
 
         function typeWord() {
             const txt = phrases[phraseIdx];
-            roleE1.textContent = deleting
+            roleEl.textContent = deleting
                 ? txt.substring(0, charIdx--)
                 : txt.substring(0, ++charIdx);
 
             let speed = deleting ? 50 : 120;
-            
+
             if (!deleting && charIdx === txt.length) {
-                speed = 2000;
+                speed    = 2000;
                 deleting = true;
             } else if (deleting && charIdx === 0) {
-                deleting = false; 
+                deleting  = false;
                 phraseIdx = (phraseIdx + 1) % phrases.length;
-                speed = 500;
+                speed     = 500;
             }
 
             setTimeout(typeWord, speed);
@@ -194,33 +215,29 @@ document.addEventListener('DOMContentLoaded', () => {
         typeWord();
     }
 
-    //==============================================================// 
-    const skillBars = document.querySelectorAll('.skill-fill');
-    const skillObserver = new IntersectionObserver((entries, observer) => {
+    /* -------------------------------------------------------
+       9️⃣  Animated skill bars (IntersectionObserver)
+    ------------------------------------------------------- */
+    const skillBars    = document.querySelectorAll('.skill-fill');
+    const skillObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-            const bar = entry.target;
+            const bar         = entry.target;
             const targetWidth = bar.getAttribute('data-width');
+
             if (entry.isIntersecting) {
                 const index = [...skillBars].indexOf(bar);
-
-                // Small delay for a statggered feel
-                setTimeout(() => {
-                    bar.style.width = targetWidth + '%';
-                }, index * 250);
+                setTimeout(() => { bar.style.width = targetWidth + '%'; }, index * 250);
             } else {
-                bar.style.width = '0%'; // Reset width when out of view
+                bar.style.width = '0%';
             }
         });
-    }, {
-        threshold: 0.3 // Trigger when 30% of the bar is visible
-    });
+    }, { threshold: 0.3 });
 
-    // Start observing each skill bar
     skillBars.forEach(bar => skillObserver.observe(bar));
 
-
-
-    /* Social Links — Single Source of Truth */
+    /* -------------------------------------------------------
+       🔟  Social links — Single Source of Truth
+    ------------------------------------------------------- */
     const socialLinks = [
         {
             href: 'https://github.com/',
@@ -236,8 +253,8 @@ document.addEventListener('DOMContentLoaded', () => {
             className: 'linkedin',
             svg: `<svg viewBox="0 0 24 24" fill="currentColor">
                     <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                  </svg>`   
-        }, 
+                  </svg>`
+        },
         {
             href: 'mailto:hello@example.com',
             label: 'Email',
@@ -253,12 +270,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!container) return;
         socialLinks.forEach(link => {
             const a = document.createElement('a');
-            a.href = link.href;
+            a.href  = link.href;
             a.title = link.label;
             a.setAttribute('aria-label', link.label);
             a.className = link.className;
             if (openInNewTab && !link.href.startsWith('mailto')) {
                 a.target = '_blank';
+                a.rel    = 'noopener noreferrer';
             }
             a.innerHTML = link.svg;
             container.appendChild(a);
@@ -268,62 +286,46 @@ document.addEventListener('DOMContentLoaded', () => {
     buildSocialIcons(document.getElementById('socialSidebar'));
     buildSocialIcons(document.getElementById('socialFooter'));
 
-   /* -------------------------------------------------------
-    10. Timeline — scroll reveal + dynamic segment positioning
-
-    HOW IT WORKS:
-    - timelineObserver watches each .timeline-item
-    - When visible, adds "revealed" class (slides in from side)
-    - updateTimeline() measures each dot's position and sets
-      the left/top/height of each .timeline-segment line
-      so it connects consecutive dots precisely
+    /* -------------------------------------------------------
+       1️⃣1️⃣  Timeline — scroll reveal + dynamic segment lines
     ------------------------------------------------------- */
     const timelineContainer = document.querySelector('.timeline-container');
     const timelineItems     = document.querySelectorAll('.timeline-item');
     const timelineDots      = document.querySelectorAll('.timeline-dot');
     const timelineSegments  = document.querySelectorAll('.timeline-segment');
 
-    // Scroll reveal for each timeline card
     if (timelineItems.length > 0) {
         const timelineObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('revealed');    // slide IN  ←
-                } else {
-                    entry.target.classList.remove('revealed'); // slide OUT →
-                }
+                entry.target.classList.toggle('revealed', entry.isIntersecting);
             });
         }, { threshold: 0.2 });
 
         timelineItems.forEach(item => timelineObserver.observe(item));
     }
 
-    // Position each segment line between consecutive dots
     function updateTimeline() {
         if (!timelineContainer || timelineDots.length < 2) return;
 
         const containerRect = timelineContainer.getBoundingClientRect();
 
-        // Get center (x, y) of each dot + its radius
         const dotPositions = Array.from(timelineDots).map(dot => {
-        const rect = dot.getBoundingClientRect();
+            const rect = dot.getBoundingClientRect();
             return {
                 x:      rect.left - containerRect.left + rect.width  / 2,
                 y:      rect.top  - containerRect.top  + rect.height / 2,
-                radius: rect.height / 2  // half the dot height
+                radius: rect.height / 2
             };
         });
 
-        // Segment goes from BOTTOM EDGE of dot[i] to TOP EDGE of dot[i+1]
-        // so the line fits exactly between dots without overlapping them
         timelineSegments.forEach((segment, index) => {
             const start = dotPositions[index];
             const end   = dotPositions[index + 1];
             if (!start || !end) return;
 
             const x      = (start.x + end.x) / 2;
-            const top    = start.y + start.radius;          // bottom edge of top dot
-            const height = (end.y - end.radius) - top;      // top edge of bottom dot
+            const top    = start.y + start.radius;
+            const height = (end.y - end.radius) - top;
 
             segment.style.left   = `${x}px`;
             segment.style.top    = `${top}px`;
@@ -334,6 +336,5 @@ document.addEventListener('DOMContentLoaded', () => {
     requestAnimationFrame(updateTimeline);
     window.addEventListener('load',   updateTimeline);
     window.addEventListener('resize', updateTimeline);
-})
 
-
+}); // ← closes DOMContentLoaded
