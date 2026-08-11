@@ -1,3 +1,10 @@
+(function () {
+        const saved = localStorage.getItem('theme');
+        const oslight = window.matchMedia('...').matches;
+        const theme = saved || (oslight ? 'light' : 'dark');
+        document.documentElement.setAttribute('data-theme', theme);
+    })();
+
 document.addEventListener('DOMContentLoaded', () => {
     /* -------------------------------------------------------
     1️⃣  Smooth scrolling for all anchor links (href="#…")
@@ -56,6 +63,28 @@ document.addEventListener('DOMContentLoaded', () => {
     // Call once on load (in case the page opens at a non-top offset)
     setActiveNav();
 
+
+    /* -------------------------------------------------------
+    4. Theme toggle — LESSON 5 PART 3
+
+    HOW IT WORKS:
+    - Read current data-theme from <html>
+    - Flip it: 'dark' → 'light' or 'light' → 'dark'
+    - Write it back to <html>  → CSS vars update instantly
+    - Save to localStorage     → remembered on next visit
+    ------------------------------------------------------- */
+    const themeToggle = document.getElementById('themeToggle');
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme');
+
+            const next = current === 'dark' ? 'light' : 'dark';
+
+            document.documentElement.setAttribute('data-theme', next);
+
+            localStorage.setItem('theme',next);
+        });
+    }
 
     /* -------------------------------------------------------
     4️⃣  Back‑to‑top button (optional)
@@ -190,24 +219,6 @@ document.addEventListener('DOMContentLoaded', () => {
     skillBars.forEach(bar => skillObserver.observe(bar));
 
 
-    //==============================================================//
-    const timelineItems = document.querySelectorAll('.timeline-item');
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('show');
-            } else {
-                entry.target.classList.remove('show');
-            }
-
-        });
-    }, {
-        threshold: 0.2
-    });
-
-    timelineItems.forEach(item => {
-        observer.observe(item);
-    });
 
     /* Social Links — Single Source of Truth */
     const socialLinks = [
@@ -256,5 +267,73 @@ document.addEventListener('DOMContentLoaded', () => {
 
     buildSocialIcons(document.getElementById('socialSidebar'));
     buildSocialIcons(document.getElementById('socialFooter'));
-});
+
+   /* -------------------------------------------------------
+    10. Timeline — scroll reveal + dynamic segment positioning
+
+    HOW IT WORKS:
+    - timelineObserver watches each .timeline-item
+    - When visible, adds "revealed" class (slides in from side)
+    - updateTimeline() measures each dot's position and sets
+      the left/top/height of each .timeline-segment line
+      so it connects consecutive dots precisely
+    ------------------------------------------------------- */
+    const timelineContainer = document.querySelector('.timeline-container');
+    const timelineItems     = document.querySelectorAll('.timeline-item');
+    const timelineDots      = document.querySelectorAll('.timeline-dot');
+    const timelineSegments  = document.querySelectorAll('.timeline-segment');
+
+    // Scroll reveal for each timeline card
+    if (timelineItems.length > 0) {
+        const timelineObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');    // slide IN  ←
+                } else {
+                    entry.target.classList.remove('revealed'); // slide OUT →
+                }
+            });
+        }, { threshold: 0.2 });
+
+        timelineItems.forEach(item => timelineObserver.observe(item));
+    }
+
+    // Position each segment line between consecutive dots
+    function updateTimeline() {
+        if (!timelineContainer || timelineDots.length < 2) return;
+
+        const containerRect = timelineContainer.getBoundingClientRect();
+
+        // Get center (x, y) of each dot + its radius
+        const dotPositions = Array.from(timelineDots).map(dot => {
+        const rect = dot.getBoundingClientRect();
+            return {
+                x:      rect.left - containerRect.left + rect.width  / 2,
+                y:      rect.top  - containerRect.top  + rect.height / 2,
+                radius: rect.height / 2  // half the dot height
+            };
+        });
+
+        // Segment goes from BOTTOM EDGE of dot[i] to TOP EDGE of dot[i+1]
+        // so the line fits exactly between dots without overlapping them
+        timelineSegments.forEach((segment, index) => {
+            const start = dotPositions[index];
+            const end   = dotPositions[index + 1];
+            if (!start || !end) return;
+
+            const x      = (start.x + end.x) / 2;
+            const top    = start.y + start.radius;          // bottom edge of top dot
+            const height = (end.y - end.radius) - top;      // top edge of bottom dot
+
+            segment.style.left   = `${x}px`;
+            segment.style.top    = `${top}px`;
+            segment.style.height = `${Math.max(0, height)}px`;
+        });
+    }
+
+    requestAnimationFrame(updateTimeline);
+    window.addEventListener('load',   updateTimeline);
+    window.addEventListener('resize', updateTimeline);
+})
+
 
