@@ -19,7 +19,7 @@ async function loadProjects() {
 
         result.data.forEach(project => {
             const article = document.createElement('article');
-            article.className = 'reveal';
+            article.className = 'project-card';
 
             article.innerHTML = `
                 ${
