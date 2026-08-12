@@ -22,34 +22,60 @@ async function loadProjects() {
             article.className = 'project-card';
 
             article.innerHTML = `
-                ${
-                    project.image_url
-                    ? `<img src="${project.image_url}" alt="${project.title}">`
-                        : ''
-                }
+            <div class="project-card-content">
+
+                <div class="project-label">
+                    <span class="project-dot"></span>
+                    PROJECT
+                </div>
 
                 <h3>${project.title}</h3>
 
-                <p>${project.description}</p>
-
-                <p class="project-tech">
-                    ${project.tech_stack || ''}
+                <p class="project-description">
+                    ${project.description}
                 </p>
 
+                <div class="project-tech">
+                    ${
+                        project.tech_stack
+                            ? project.tech_stack
+                                .split(',')
+                                .map(tech => `<span>${tech.trim()}</span>`)
+                                .join('')
+                            : ''
+                    }
+                </div>
+
                 <div class="project-links">
-                    <a href="project.html?id=${project.id}">
+
+                    <a
+                        href="project.html?id=${project.id}"
+                        class="project-btn project-btn-primary"
+                    >
                         View Project
+                        <span>→</span>
                     </a>
 
                     ${
                         project.github_url
-                            ? `<a href="${project.github_url}" target="_blank" rel="noopener noreferrer">
-                                GitHub
-                                </a>`
-                                : ''
+                            ? `
+                                <a
+                                    href="${project.github_url}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="project-btn project-btn-secondary"
+                                >
+                                    GitHub
+                                    <span>↗</span>
+                                </a>
+                            `
+                            : ''
                     }
+
                 </div>
-            `;
+
+            </div>
+        `;
 
             container.appendChild(article);
         });
