@@ -37,13 +37,9 @@ async function loadProjects() {
                 </p>
 
                 <div class="project-links">
-                    ${
-                        project.demo_url
-                            ? `<a href="${project.demo_url}" target="_blank" rel="noopener noreferrer">
-                                View Project
-                                </a>`
-                                : ''
-                    }
+                    <a href="project.html?id=${project.id}">
+                        View Project
+                    </a>
 
                     ${
                         project.github_url
