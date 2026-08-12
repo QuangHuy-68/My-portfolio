@@ -6,8 +6,10 @@ async function loadProject() {
 
     if (!id) {
         container.innerHTML = `
-            <h1>Project not found</h1>
-            <a href="index.html#projects">Back to Projects</a>
+            <div class="project-not-found">
+                <h1>Project not found</h1>
+                <a href="index.html#projects">← Back to Projects</a>
+            </div>
         `;
         return;
     }
@@ -32,31 +34,55 @@ async function loadProject() {
         container.innerHTML = `
             <article class="project-detail-card">
 
+                <div class="project-detail-header">
+
+                    <span class="project-detail-label">
+                        PROJECT
+                    </span>
+
+                    <h1>${project.title}</h1>
+
+                    <p class="project-detail-description">
+                        ${project.description}
+                    </p>
+
+                </div>
+
                 ${
                     project.image_url
                         ? `
-                            <img
-                                src="${project.image_url}"
-                                alt="${project.title}"
-                                class="project-detail-image"
-                            >
+                            <div class="project-detail-image-wrapper">
+                                <img
+                                    src="${project.image_url}"
+                                    alt="${project.title}"
+                                    class="project-detail-image"
+                                >
+                            </div>
                         `
                         : ''
                 }
 
-                <h1>${project.title}</h1>
+                <section class="project-detail-section">
 
-                <p class="project-description">
-                    ${project.description}
-                </p>
+                    <h2>Tech Stack</h2>
 
-                <h2>Tech Stack</h2>
+                    <div class="project-detail-tech">
+                        ${
+                            project.tech_stack
+                                ? project.tech_stack
+                                    .split(',')
+                                    .map(
+                                        tech =>
+                                            `<span>${tech.trim()}</span>`
+                                    )
+                                    .join('')
+                                : '<span>Not specified</span>'
+                        }
+                    </div>
 
-                <p>
-                    ${project.tech_stack || 'Not specified'}
-                </p>
+                </section>
 
-                <div class="project-detail-links">
+                <div class="project-detail-actions">
 
                     ${
                         project.demo_url
@@ -65,8 +91,10 @@ async function loadProject() {
                                     href="${project.demo_url}"
                                     target="_blank"
                                     rel="noopener noreferrer"
+                                    class="project-detail-btn primary"
                                 >
                                     Live Demo
+                                    <span>↗</span>
                                 </a>
                             `
                             : ''
@@ -79,8 +107,10 @@ async function loadProject() {
                                     href="${project.github_url}"
                                     target="_blank"
                                     rel="noopener noreferrer"
+                                    class="project-detail-btn secondary"
                                 >
                                     GitHub Repository
+                                    <span>↗</span>
                                 </a>
                             `
                             : ''
@@ -95,12 +125,14 @@ async function loadProject() {
         console.error('Project detail error:', error);
 
         container.innerHTML = `
-            <h1>Unable to load project</h1>
-            <p>${error.message}</p>
+            <div class="project-not-found">
+                <h1>Unable to load project</h1>
+                <p>${error.message}</p>
 
-            <a href="index.html#projects">
-                ← Back to Projects
-            </a>
+                <a href="index.html#projects">
+                    ← Back to Projects
+                </a>
+            </div>
         `;
     }
 }
