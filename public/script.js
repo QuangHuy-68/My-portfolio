@@ -1,3 +1,72 @@
+async function loadProjects() {
+    const container = document.getElementById('projectsGrid');
+
+    if (!container) return;
+    try {
+        const response = await fetch('/api/projects');
+
+        if (!response.ok) {
+            throw new Error(`HTTP error: ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        if (!result.success) {
+            throw new Error(result.error || 'Failed to load projects');
+        }
+
+        container.innerHTML = '';
+
+        result.data.forEach(project => {
+            const article = document.createElement('article');
+            article.className = 'reveal';
+
+            article.innerHTML = `
+                ${
+                    project.image_url
+                    ? `<img src="${project.image_url}" alt="${project.title}">`
+                        : ''
+                }
+
+                <h3>${project.title}</h3>
+
+                <p>${project.description}</p>
+
+                <p class="project-tech">
+                    ${project.tech_stack || ''}
+                </p>
+
+                <div class="project-links">
+                    ${
+                        project.demo_url
+                            ? `<a href="${project.demo_url}" target="_blank" rel="noopener noreferrer">
+                                View Project
+                                </a>`
+                                : ''
+                    }
+
+                    ${
+                        project.github_url
+                            ? `<a href="${project.github_url}" target="_blank" rel="noopener noreferrer">
+                                GitHub
+                                </a>`
+                                : ''
+                    }
+                </div>
+            `;
+
+            container.appendChild(article);
+        });
+
+    } catch (error) {
+        console.error('Projects error:', error);
+
+        container.innerHTML = `
+            <p>Unable to load projects.</p>
+        `;
+    }
+
+}
 document.addEventListener('DOMContentLoaded', () => {
 
     loadProjects();
@@ -340,73 +409,5 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('resize', updateTimeline);
 
 
-    async function loadProjects() {
-        const container = document.getElementById('projectsGrid');
-
-        if (!container) return;
-
-        try {
-            const response = await fetch('/api/projects');
-
-            if (!response.ok) {
-                throw new Error(`HTTP error: ${response.status}`);
-            }
-
-            const result = await response.json();
-
-            if (!result.success) {
-                throw new Error(result.error || 'Failed to load projects');
-            }
-
-            container.innerHTML = '';
-
-            result.data.forEach(project => {
-                const article = document.createElement('article');
-                article.className = 'reveal';
-
-                article.innerHTML = `
-                    ${
-                        project.image_url
-                            ? `<img src="${project.image_url}" alt="${project.title}">`
-                            : ''
-                    }
-
-                    <h3>${project.title}</h3>
-
-                    <p>${project.description}</p>
-
-                    <p class="project-tech">
-                        ${project.tech_stack || ''}
-                    </p>
-
-                    <div class="project-links">
-                        ${
-                            project.demo_url
-                                ? `<a href="${project.demo_url}" target="_blank" rel="noopener noreferrer">
-                                    View Project
-                                </a>`
-                                : ''
-                        }
-
-                        ${
-                            project.github_url
-                                ? `<a href="${project.github_url}" target="_blank" rel="noopener noreferrer">
-                                    GitHub
-                                </a>`
-                                : ''
-                        }
-                    </div>
-                `;
-
-                container.appendChild(article);
-            });
-
-        } catch (error) {
-            console.error('Projects error:', error);
-
-            container.innerHTML = `
-                <p>Unable to load projects.</p>
-            `;
-        }
-    }
+    
 }); // ← closes DOMContentLoaded
