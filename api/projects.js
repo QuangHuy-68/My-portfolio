@@ -19,6 +19,7 @@ module.exports = async (req, res) => {
 
         return res.status(200).json({
             success: true,
+            source: 'projects-api-v1',
             // 3. Fixed data access: Postgres puts the array inside result.rows
             data: result.rows
         });
