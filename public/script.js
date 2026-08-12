@@ -1,3 +1,4 @@
+let revealObserver;
 async function loadProjects() {
     const container = document.getElementById('projectsGrid');
 
@@ -19,7 +20,7 @@ async function loadProjects() {
 
         result.data.forEach(project => {
             const article = document.createElement('article');
-            article.className = 'project-card';
+            article.className = 'project-card reveal';
 
             article.innerHTML = `
             <div class="project-card-content">
@@ -78,6 +79,7 @@ async function loadProjects() {
         `;
 
             container.appendChild(article);
+            revealObserver.observe(article);
         });
 
     } catch (error) {
@@ -90,6 +92,19 @@ async function loadProjects() {
 
 }
 document.addEventListener('DOMContentLoaded', () => {
+    /* -------------------------------------------------------
+       7️⃣  Scroll‑reveal (IntersectionObserver)
+          Add class="reveal" to any element you want to animate.
+    ------------------------------------------------------- */
+    const revealElements = document.querySelectorAll('.reveal');
+
+    revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            entry.target.classList.toggle('revealed', entry.isIntersecting);
+        });
+    }, { threshold: 0.15, rootMargin: '0px 0px -10%' });
+
+    revealElements.forEach(el => revealObserver.observe(el));
 
     loadProjects();
 
@@ -256,19 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    /* -------------------------------------------------------
-       7️⃣  Scroll‑reveal (IntersectionObserver)
-          Add class="reveal" to any element you want to animate.
-    ------------------------------------------------------- */
-    const revealElements = document.querySelectorAll('.reveal');
-
-    const revealObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            entry.target.classList.toggle('revealed', entry.isIntersecting);
-        });
-    }, { threshold: 0.15, rootMargin: '0px 0px -10%' });
-
-    revealElements.forEach(el => revealObserver.observe(el));
+    
 
     /* -------------------------------------------------------
        8️⃣  Typing Animation (Hero role line)
