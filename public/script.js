@@ -519,5 +519,79 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    
+    /* -------------------------------------------------------
+    Scroll Progress
+    ------------------------------------------------------- */
+
+    const scrollProgress =
+        document.getElementById('scrollProgress');
+
+    let progressTarget = 0;
+    let progressCurrent = 0;
+    let progressTicking = false;
+
+    function updateScrollProgress() {
+
+        const scrollTop = window.scrollY;
+
+        const documentHeight =
+            document.documentElement.scrollHeight;
+
+        const viewportHeight =
+            window.innerHeight;
+
+        const scrollableHeight =
+            documentHeight - viewportHeight;
+
+        if (scrollableHeight <= 0) {
+            progressTarget = 0;
+            return;
+        }
+
+        progressTarget =
+            (scrollTop / scrollableHeight) * 100;
+
+        progressTarget =
+            Math.max(0, Math.min(100, progressTarget));
+
+        if (!progressTicking) {
+            requestAnimationFrame(animateScrollProgress);
+            progressTicking = true;
+        }
+    }
+
+    function animateScrollProgress() {
+
+        progressCurrent +=
+            (progressTarget - progressCurrent) * 0.12;
+
+        scrollProgress.style.width =
+            `${progressCurrent}%`;
+
+        if (Math.abs(progressTarget - progressCurrent) > 0.01) {
+
+            requestAnimationFrame(
+                animateScrollProgress
+            );
+
+        } else {
+
+            progressCurrent = progressTarget;
+            progressTicking = false;
+        }
+    }
+
+    window.addEventListener(
+        'scroll',
+        updateScrollProgress,
+        { passive: true }
+    );
+
+    window.addEventListener(
+        'resize',
+        updateScrollProgress
+    );
+
+    updateScrollProgress();
+
 }); // ← closes DOMContentLoaded

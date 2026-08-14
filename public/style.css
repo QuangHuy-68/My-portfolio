@@ -290,6 +290,109 @@ nav a.logo:hover { background: transparent; }
 }
 
 /* ===================================================================
+   HERO CTA
+=================================================================== */
+.hero-subtitle {
+    margin-top: 4px;
+    margin-bottom: 28px;
+
+    color: var(--text-secondary);
+    font-size: 16px !important;
+}
+
+.hero-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+
+    margin-top: 28px;
+}
+
+.hero-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    min-width: 150px;
+    padding: 11px 18px;
+
+    border-radius: 12px;
+
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+
+    transition: 
+        transform 0.3s ease,
+        box-shadow 0.3s ease,
+        background 0.3s ease,
+        border-color 0.3s ease;
+}
+
+.hero-btn span {
+    transition: transform 0.3s ease;
+}
+
+/* Primary */
+.hero-btn-primary {
+    color: #ffffff;
+
+    background: 
+        linear-gradient(
+            135deg,
+            var(--accent),
+            var(--accent-2)
+        );
+    
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    box-shadow: 0 10px 25px rgba(108, 99, 255, 0.25);
+}
+
+.hero-btn-primary:hover {
+    color: #ffffff;
+    transform: translateY(-3px);
+    box-shadow: 0 15px 32px rgba(108, 99, 255, 0.38);
+}
+
+.hero-btn-primary:hover span {
+    transform: translateY(3px);
+}
+
+/* Secondary */
+.hero-btn-secondary {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+}
+
+.hero-btn-secondary:hover {
+    color: var(--text-heading);
+    transform: translateY(-3px);
+    background: rgba(108, 99, 255, 0.06);
+    border-color: var(--border-accent);
+    box-shadow: 0 10px 25px rgba(108, 99, 255, 0.10);
+}
+
+.hero-btn-secondary:hover span {
+    transform: translate(2px, -2px);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .hero-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .hero-btn {
+        width: min(100%, 260px);
+    }
+}
+
+/* ===================================================================
    AVATAR
 =================================================================== */
 .avatar-container {
@@ -371,8 +474,9 @@ h2 {
 }
 
 .about-content {
-    max-width: 760px;
-    margin: 0 auto;
+    width: 100%;
+    max-width: none;
+    margin: 0;
 }
 
 .about-typing {
@@ -1713,4 +1817,24 @@ footer {
     .project-detail-btn {
         width: 100%;
     }
+}
+
+/* ===================================================================
+   SCROLL PROGRESS
+=================================================================== */
+.scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 3px;
+
+    background: #6c63ff;
+
+    box-shadow:    
+        0 0 3px rgba(108, 99, 255, 0.45),
+        0 0 8px rgba(168, 85, 247, 0.20);
+    
+    z-index: 9999;
+    pointer-events: none;
 }
