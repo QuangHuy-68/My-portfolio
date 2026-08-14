@@ -385,53 +385,58 @@ document.addEventListener('DOMContentLoaded', () => {
     /* -------------------------------------------------------
        1️⃣1️⃣  Timeline — scroll reveal + dynamic segment lines
     ------------------------------------------------------- */
-    const timelineContainer = document.querySelector('.timeline-container');
-    const timelineItems     = document.querySelectorAll('.timeline-item');
-    const timelineDots      = document.querySelectorAll('.timeline-dot');
-    const timelineSegments  = document.querySelectorAll('.timeline-segment');
+    const timeline = document.querySelector('.timeline');
 
-    if (timelineItems.length > 0) {
-        const timelineObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                entry.target.classList.toggle('revealed', entry.isIntersecting);
-            });
-        }, { threshold: 0.2 });
+    if(timeline) {
+        const timelineItems = document.querySelectorAll('.timeline-item');
+        const timelineProgress = document.querySelector('.timeline-rail-progress');
 
-        timelineItems.forEach(item => timelineObserver.observe(item));
-    }
+        timelineItems.forEach(item => {
+            revealObserver.observe(item);
+});
 
-    function updateTimeline() {
-        if (!timelineContainer || timelineDots.length < 2) return;
+        /* Active item */
+        const timelineActiveObserver = new IntersectionObserver( 
+            (entries) => {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) return;
+                    
+                    timelineItems.forEach(item => {
+                        item.classList.remove('active');
+                    });
 
-        const containerRect = timelineContainer.getBoundingClientRect();
-
-        const dotPositions = Array.from(timelineDots).map(dot => {
-            const rect = dot.getBoundingClientRect();
-            return {
-                x:      rect.left - containerRect.left + rect.width  / 2,
-                y:      rect.top  - containerRect.top  + rect.height / 2,
-                radius: rect.height / 2
-            };
+                    entry.target.classList.add('active');
+                });
+            },
+            {
+                rootMargin: '-38% 0px -48% 0px',
+                threshold: 0
+            }
+        );
+        timelineItems.forEach(item => { 
+            timelineActiveObserver.observe(item);
         });
 
-        timelineSegments.forEach((segment, index) => {
-            const start = dotPositions[index];
-            const end   = dotPositions[index + 1];
-            if (!start || !end) return;
+        /* Scroll progress */
+        function updateTimelineProgress() {
+            if (!timelineProgress) return;
+            const rect = timeline.getBoundingClientRect();
+            const viewportPoint = window.innerHeight * 0.55;
+            const start = rect.top;
+            const end = rect.bottom;
+            const distance = end - start;
 
-            const x      = (start.x + end.x) / 2;
-            const top    = start.y + start.radius;
-            const height = (end.y - end.radius) - top;
+            if (distance <= 0) return;
+            const progress = ((viewportPoint - start) / distance) * 100;
+            
+            const clamped = Math.max(0, Math.min(100, progress));
+            timelineProgress.style.height = `${clamped}%`;
+        }
 
-            segment.style.left   = `${x}px`;
-            segment.style.top    = `${top}px`;
-            segment.style.height = `${Math.max(0, height)}px`;
-        });
+        window.addEventListener('scroll', updateTimelineProgress, { passive: true });
+        window.addEventListener('resize', updateTimelineProgress);
+        updateTimelineProgress();
     }
-
-    requestAnimationFrame(updateTimeline);
-    window.addEventListener('load',   updateTimeline);
-    window.addEventListener('resize', updateTimeline);
 
 
     
