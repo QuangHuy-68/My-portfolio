@@ -109,6 +109,86 @@ document.addEventListener('DOMContentLoaded', () => {
     loadProjects();
 
     /* -------------------------------------------------------
+   7️⃣ About — Reveal + Typing Animation
+    ------------------------------------------------------- */
+    const aboutSection = document.getElementById('about');
+    const aboutTyping = document.getElementById('aboutTyping');
+
+    if (aboutSection && aboutTyping) {
+        const aboutText = 
+            "I'm a Data Science student passionate about data, software development, and technology.\n\n" +
+            "I enjoy turning ideas into practical applications while continuously learning new technologies and solving real-world problems.";
+        let typingTimer = null;    
+        let isTyping = false;
+
+        function startAboutTyping() {
+            // Reset text
+            aboutTyping.textContent = '';
+
+            // Clear previous timer
+            if (typingTimer) {
+                clearTimeout(typingTimer);
+            }
+
+            let index = 0;
+            isTyping = true;
+
+            function typeAbout() {
+                if (!isTyping) {
+                    return;
+                }
+
+                if (index >= aboutText.length) {
+                    isTyping = false;
+                    return;
+                }
+
+                aboutTyping.textContent += aboutText.charAt(index);
+                index++;
+
+                typingTimer = setTimeout(typeAbout, 30);
+            }
+
+            typeAbout();
+        }
+
+        function resetAboutTyping() {
+            isTyping = false;
+            if (typingTimer) {
+                clearTimeout(typingTimer);
+                typingTimer = null;
+            }
+
+            aboutTyping.textContent = '';
+        }
+
+        const aboutObserver = new IntersectionObserver(
+            (entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+
+                    // Wait for reveal animation
+                    setTimeout(() => {
+                        startAboutTyping();
+                    }, 500);
+
+                    } else {
+
+                        // Leaving About → reset
+                        resetAboutTyping();
+                    }
+                });
+            },
+            {
+                threshold: 0.35
+            }
+        );
+
+        aboutObserver.observe(aboutSection);
+    }
+
+
+    /* -------------------------------------------------------
        1️⃣  Smooth scrolling for all anchor links (href="#…")
     ------------------------------------------------------- */
     document.querySelectorAll('a[href^="#"]').forEach(link => {

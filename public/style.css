@@ -356,13 +356,64 @@ h2 {
     transition: color 0.4s ease;
 }
 
-/* ===================================================================
-   ABOUT
-=================================================================== */
-#about p {
+/* ================================================================
+   ABOUT TYPING
+================================================================ */
+.about-section {
+    padding-top: 100px;
+    padding-bottom: 100px;
+}
+
+.about-content .section-eyebrow {
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+}
+
+.about-content {
+    max-width: 760px;
+    margin: 0 auto;
+}
+
+.about-typing {
+    min-height: 120px;
+    display: block;
+    margin-top: 24px;
     color: var(--text-secondary);
-    margin-bottom: 16px;
-    font-size: 16px;
+    font-size: 17px;
+    line-height: 1.9;
+}
+
+#aboutTyping {
+    display: inline;
+    margin: 0;
+    white-space: pre-line;
+}
+
+/* Typing cursor */
+.typing-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1.15em;
+    margin-left: 4px;
+    vertical-align: -2px;
+    background: var(--accent);
+    border-radius: 999px;
+    box-shadow: 0 0 8px rgba(108, 99, 255, 0.7);
+    animation: typingBlink 0.8s steps(1) infinite;
+}
+
+@keyframes typingBlink {
+    50% {
+        opacity: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .about-typing {
+        font-size: 15px;
+        line-height: 1.8;
+    }
 }
 
 /* ===================================================================
