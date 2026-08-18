@@ -65,7 +65,7 @@ function renderProjects() {
     }
 
     filteredProjects.forEach(project => {
-        const article = document.createElement('árticle');
+        const article = document.createElement('article');
 
         article.className = 'project-card reveal';
 
@@ -90,7 +90,7 @@ function renderProjects() {
                             ? project.tech_stack
                                 .split(',')
                                 .map(
-                                    tech = 
+                                    tech => 
                                         `<span>${tech.trim()}</span>`
                                 )
                                 .join('')
