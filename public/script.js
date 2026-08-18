@@ -572,7 +572,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let progressCurrent = 0;
     let progressTicking = false;
 
-    function updateScrollProgress() {
+    function calculateScrollProgress() {
+
+        if (!scrollProgress) return;
 
         const scrollTop = window.scrollY;
 
@@ -593,24 +595,33 @@ document.addEventListener('DOMContentLoaded', () => {
         progressTarget =
             (scrollTop / scrollableHeight) * 100;
 
-        progressTarget =
-            Math.max(0, Math.min(100, progressTarget));
+        progressTarget = Math.max(
+            0,
+            Math.min(100, progressTarget)
+        );
 
         if (!progressTicking) {
-            requestAnimationFrame(animateScrollProgress);
             progressTicking = true;
+            requestAnimationFrame(animateScrollProgress);
         }
     }
 
     function animateScrollProgress() {
 
-        progressCurrent +=
-            (progressTarget - progressCurrent) * 0.12;
+        if (!scrollProgress) {
+            progressTicking = false;
+            return;
+        }
+
+        const difference =
+            progressTarget - progressCurrent;
+
+        progressCurrent += difference * 0.12;
 
         scrollProgress.style.width =
             `${progressCurrent}%`;
 
-        if (Math.abs(progressTarget - progressCurrent) > 0.01) {
+        if (Math.abs(difference) > 0.01) {
 
             requestAnimationFrame(
                 animateScrollProgress
@@ -619,22 +630,25 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
 
             progressCurrent = progressTarget;
+            scrollProgress.style.width =
+                `${progressCurrent}%`;
+
             progressTicking = false;
         }
     }
 
     window.addEventListener(
         'scroll',
-        updateScrollProgress,
+        calculateScrollProgress,
         { passive: true }
     );
 
     window.addEventListener(
         'resize',
-        updateScrollProgress
+        calculateScrollProgress
     );
 
-    updateScrollProgress();
+    calculateScrollProgress();
 
 
     /* -------------------------------------------------------
