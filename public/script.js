@@ -1,8 +1,12 @@
 let revealObserver;
+let allProjects = [];
+let projectSearchTerm = '';
+
 async function loadProjects() {
     const container = document.getElementById('projectsGrid');
 
     if (!container) return;
+
     try {
         const response = await fetch('/api/projects');
 
@@ -16,13 +20,57 @@ async function loadProjects() {
             throw new Error(result.error || 'Failed to load projects');
         }
 
-        container.innerHTML = '';
+        allProjects = Array.isArray(result.data)
+            ? result.data
+            : [];
+        
+        renderProjects();
+    
+    } catch (error) {
+        console.error('Projects error:', error);
 
-        result.data.forEach(project => {
-            const article = document.createElement('article');
-            article.className = 'project-card reveal';
+        container.innerHTML = `
+            <p>Unable to load projects.</p>
+        `;
+    }
+}
 
-            article.innerHTML = `
+function renderProjects() {
+    const container = document.getElementById('projectsGrid');
+
+    if (!container) return;
+
+    const filteredProjects = allProjects.filter(project => {
+        const title = (project.title || '').toLowerCase();
+        const description = (project.description || '').toLowerCase();
+        const techStack = (project.tech_stack || '').toLowerCase();
+
+        return (
+            !projectSearchTerm ||
+            title.includes(projectSearchTerm) ||
+            description.includes(projectSearchTerm) ||
+            techStack.includes(projectSearchTerm)
+        );
+    });
+
+    container.innerHTML = '';
+
+    if (filteredProjects.length === 0) {
+        container.innerHTML = `
+            <p class="projects-empty">
+                No projects found.
+            </p>
+        `;
+        return;
+    }
+
+    filteredProjects.forEach(project => {
+        const article = document.createElement('árticle');
+
+        article.className = 'project-card reveal';
+
+
+        article.innerHTML = `
             <div class="project-card-content">
 
                 <div class="project-label">
@@ -31,7 +79,7 @@ async function loadProjects() {
                 </div>
 
                 <h3>${project.title}</h3>
-
+                
                 <p class="project-description">
                     ${project.description}
                 </p>
@@ -41,7 +89,10 @@ async function loadProjects() {
                         project.tech_stack
                             ? project.tech_stack
                                 .split(',')
-                                .map(tech => `<span>${tech.trim()}</span>`)
+                                .map(
+                                    tech = 
+                                        `<span>${tech.trim()}</span>`
+                                )
                                 .join('')
                             : ''
                     }
@@ -49,7 +100,7 @@ async function loadProjects() {
 
                 <div class="project-links">
 
-                    <a
+                    <a 
                         href="project.html?id=${project.id}"
                         class="project-btn project-btn-primary"
                     >
@@ -59,8 +110,8 @@ async function loadProjects() {
 
                     ${
                         project.github_url
-                            ? `
-                                <a
+                            ?`
+                                <a 
                                     href="${project.github_url}"
                                     target="_blank"
                                     rel="noopener noreferrer"
@@ -72,24 +123,15 @@ async function loadProjects() {
                             `
                             : ''
                     }
-
                 </div>
-
             </div>
         `;
 
-            container.appendChild(article);
+        container.appendChild(article);
+        if (revealObserver) {
             revealObserver.observe(article);
-        });
-
-    } catch (error) {
-        console.error('Projects error:', error);
-
-        container.innerHTML = `
-            <p>Unable to load projects.</p>
-        `;
-    }
-
+        }
+    });
 }
 document.addEventListener('DOMContentLoaded', () => {
     /* -------------------------------------------------------
@@ -593,5 +635,42 @@ document.addEventListener('DOMContentLoaded', () => {
     );
 
     updateScrollProgress();
+
+
+    /* -------------------------------------------------------
+    Navbar Search
+    ------------------------------------------------------- */
+
+    const navSearch = document.querySelector('.nav-search');
+    const searchToggle = document.getElementById('searchToggle');
+    const projectSearch = document.getElementById('projectSearch');
+
+    if (navSearch && searchToggle && projectSearch) {
+        
+        searchToggle.addEventListener('click', () => {
+            
+            navSearch.classList.toggle('open');
+
+            if (navSearch.classList.contains('open')) {
+                setTimeout(() => {
+                    projectSearch.focus();
+                }, 100);
+            }
+        });
+
+        document.addEventListener('click', (event) => {
+
+            if (!navSearch.contains(event.target)) {
+                navSearch.classList.remove('open');
+            }
+        });
+
+        projectSearch.addEventListener('input', (event) => {
+
+            projectSearchTerm = event.target.value.trim().toLowerCase();
+        
+        renderProjects();    
+        })
+    }
 
 }); // ← closes DOMContentLoaded
