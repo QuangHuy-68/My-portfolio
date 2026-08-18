@@ -680,11 +680,24 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         projectSearch.addEventListener('input', (event) => {
+            projectSearchTerm = event.target.value
+                .trim()
+                .toLowerCase();
 
-            projectSearchTerm = event.target.value.trim().toLowerCase();
-        
-        renderProjects();    
-        })
+            renderProjects();
+
+            if (projectSearchTerm) {
+                const projectsSection =
+                    document.getElementById('projects');
+
+                if (projectsSection) {
+                    projectsSection.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            }
+        });
     }
 
 }); // ← closes DOMContentLoaded
